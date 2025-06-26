@@ -37,8 +37,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/store/user-store";
+import createClient from "@/lib/supabase/client";
 
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false);
