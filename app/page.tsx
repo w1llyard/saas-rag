@@ -20,10 +20,11 @@ import {
   ExternalLink,
   ArrowRight,
   Github,
-  Zap,
   Shield,
   LogIn,
   Play,
+  Sparkles,
+  Star,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -33,6 +34,86 @@ import { useTheme } from "next-themes"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useUserStore } from "@/store/user-store"
 import { useRouter } from "next/navigation"
+
+// Magic UI Components
+const GridPattern = ({ className = "" }: { className?: string }) => (
+  <div className={`absolute inset-0 ${className}`}>
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+  </div>
+)
+
+const DotPattern = ({ className = "" }: { className?: string }) => (
+  <div className={`absolute inset-0 ${className}`}>
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.15)_1px,transparent_0)] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[size:20px_20px]" />
+  </div>
+)
+
+const GradientBlur = ({ className = "", color = "purple" }: { className?: string; color?: string }) => {
+  const colorMap = {
+    purple: "from-purple-600/30 to-pink-600/30",
+    blue: "from-blue-600/30 to-cyan-600/30",
+    green: "from-green-600/30 to-emerald-600/30",
+    orange: "from-orange-600/30 to-red-600/30",
+  }
+
+  return (
+    <div
+      className={`absolute rounded-full bg-gradient-to-br ${colorMap[color as keyof typeof colorMap]} blur-3xl opacity-70 ${className}`}
+    />
+  )
+}
+
+const AnimatedBeam = ({ className = "" }: { className?: string }) => (
+  <div
+    className={`absolute h-0.5 bg-gradient-to-r from-transparent via-purple-500 to-transparent animate-pulse ${className}`}
+  />
+)
+
+const FloatingElements = () => (
+  <>
+    <GradientBlur className="top-20 left-20 w-72 h-72 animate-pulse" color="purple" />
+    <GradientBlur className="bottom-20 right-20 w-96 h-96 animate-pulse delay-1000" color="blue" />
+    <GradientBlur className="top-1/2 left-1/2 w-64 h-64 animate-pulse delay-500" color="green" />
+  </>
+)
+
+const ShimmerButton = ({ children, className = "", ...props }: any) => (
+  <Button className={`relative overflow-hidden group ${className}`} {...props}>
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+    {children}
+  </Button>
+)
+
+const AnimatedCard = ({ children, className = "", delay = 0 }: any) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.5, delay }}
+    className={`group ${className}`}
+  >
+    <Card className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-lg hover:shadow-purple-500/10 hover:border-purple-500/20 hover:-translate-y-1">
+      {children}
+    </Card>
+  </motion.div>
+)
+
+const TypewriterText = ({ text, className = "" }: { text: string; className?: string }) => {
+  const [displayText, setDisplayText] = useState("")
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText((prev) => prev + text[currentIndex])
+        setCurrentIndex((prev) => prev + 1)
+      }, 50)
+      return () => clearTimeout(timeout)
+    }
+  }, [currentIndex, text])
+
+  return <span className={className}>{displayText}</span>
+}
 
 export default function LandingPage() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -169,6 +250,7 @@ export default function LandingPage() {
       title: "Head of Customer Success",
       company: "TechCorp Inc.",
       avatar: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
     {
       quote:
@@ -177,6 +259,7 @@ export default function LandingPage() {
       title: "CTO",
       company: "DevFlow",
       avatar: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
     {
       quote:
@@ -185,6 +268,7 @@ export default function LandingPage() {
       title: "Knowledge Manager",
       company: "Global Solutions",
       avatar: "/placeholder.svg?height=64&width=64",
+      rating: 5,
     },
   ]
 
@@ -222,72 +306,77 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="flex min-h-[100dvh] flex-col">
+    <div className="flex min-h-[100dvh] flex-col relative overflow-hidden">
       <motion.header
         style={{ opacity: isScrolled ? headerOpacity : 1 }}
         className={`sticky top-0 z-50 w-full backdrop-blur-lg transition-all duration-300 ${
-          isScrolled ? "bg-background/80 shadow-sm" : "bg-transparent"
+          isScrolled ? "bg-background/80 shadow-sm border-b border-border/40" : "bg-transparent"
         }`}
       >
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2 font-bold">
-            <div className="size-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white">
+            <div className="size-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white shadow-lg">
               R
             </div>
-            <span>RAG SaaS</span>
+            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">RAG SaaS</span>
           </div>
           <nav className="hidden md:flex gap-8">
             <Link
               href="#features"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
             >
               Features
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all group-hover:w-full" />
             </Link>
             <Link
               href="#how-it-works"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
             >
               How It Works
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all group-hover:w-full" />
             </Link>
             <Link
               href="#testimonials"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
             >
               Testimonials
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all group-hover:w-full" />
             </Link>
             <Link
               href="#pricing"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
             >
               Pricing
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all group-hover:w-full" />
             </Link>
             <Link
               href="#faq"
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground relative group"
             >
               FAQ
+              <div className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-purple-600 to-pink-600 transition-all group-hover:w-full" />
             </Link>
           </nav>
           <div className="hidden md:flex gap-4 items-center">
             {isAuthenticated ? (
               <Link href="/dashboard">
-                <Button
+                <ShimmerButton
                   variant="outline"
                   className="rounded-full text-sm font-medium border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/30"
                 >
                   Dashboard
                   <ArrowRight className="ml-2 size-4" />
-                </Button>
+                </ShimmerButton>
               </Link>
             ) : (
-              <Button
+              <ShimmerButton
                 variant="outline"
                 onClick={handleLogin}
                 className="rounded-full text-sm font-medium border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/30"
               >
                 <LogIn className="mr-2 size-4" />
                 Sign In
-              </Button>
+              </ShimmerButton>
             )}
 
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full">
@@ -341,10 +430,11 @@ export default function LandingPage() {
       </motion.header>
       <main className="flex-1">
         {/* Hero Section */}
-        <section ref={heroRef} className="w-full py-20 md:py-32 overflow-hidden">
-          <div className="container p-4 md:p-6 relative">
-            <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+        <section ref={heroRef} className="w-full py-20 md:py-32 relative overflow-hidden">
+          <GridPattern />
+          <FloatingElements />
 
+          <div className="container p-4 md:p-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -352,43 +442,49 @@ export default function LandingPage() {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col"
               >
-                <Badge className="mb-4 w-fit rounded-full px-4 py-1.5 text-sm font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                  <Zap className="mr-1 h-3.5 w-3.5" />
+                <Badge className="mb-4 w-fit rounded-full px-4 py-1.5 text-sm font-medium bg-gradient-to-r from-purple-100 to-pink-100 text-purple-800 dark:from-purple-900/30 dark:to-pink-900/30 dark:text-purple-300 border-0">
+                  <Sparkles className="mr-1 h-3.5 w-3.5" />
                   Powered by Gemini AI
                 </Badge>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-                  Turn Your <span className="text-purple-600 dark:text-purple-400">Documents</span> into Smart AI
-                  Chatbots
+                  Turn Your{" "}
+                  <span className="bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 bg-clip-text text-transparent animate-pulse">
+                    Documents
+                  </span>{" "}
+                  into Smart AI Chatbots
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground mb-8">
-                  Upload PDFs, TXTs, or Markdown, then ask questions and get context-aware answers powered by Gemini AI.
+                  <TypewriterText text="Upload PDFs, TXTs, or Markdown, then ask questions and get context-aware answers powered by Gemini AI." />
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   {isAuthenticated ? (
                     <Link href="/dashboard">
-                      <Button size="lg" className="rounded-full h-12 px-8 text-base bg-purple-600 hover:bg-purple-700">
+                      <ShimmerButton
+                        size="lg"
+                        className="rounded-full h-12 px-8 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25"
+                      >
                         Go to Dashboard
                         <ArrowRight className="ml-2 size-4" />
-                      </Button>
+                      </ShimmerButton>
                     </Link>
                   ) : (
-                    <Button
+                    <ShimmerButton
                       size="lg"
                       onClick={handleLogin}
-                      className="rounded-full h-12 px-8 text-base bg-purple-600 hover:bg-purple-700"
+                      className="rounded-full h-12 px-8 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25"
                     >
                       Get Started
                       <ArrowRight className="ml-2 size-4" />
-                    </Button>
+                    </ShimmerButton>
                   )}
-                  <Button
+                  <ShimmerButton
                     size="lg"
                     variant="outline"
                     className="rounded-full h-12 px-8 text-base border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-300 dark:hover:bg-purple-900/30"
                   >
                     <Play className="mr-2 h-4 w-4" />
                     Watch Demo
-                  </Button>
+                  </ShimmerButton>
                 </div>
                 <div className="flex items-center gap-4 mt-6 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
@@ -412,15 +508,18 @@ export default function LandingPage() {
                 transition={{ duration: 0.7, delay: 0.2 }}
                 className="relative"
               >
-                <div className="relative z-10 bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-800">
-                  <div className="p-4 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800 flex items-center justify-between">
+                <div className="relative z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl border border-white/20">
+                  <div className="p-4 border-b border-gray-200/50 dark:border-gray-800/50 bg-gradient-to-r from-gray-50/80 to-gray-100/80 dark:from-gray-800/80 dark:to-gray-700/80 flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="size-6 rounded-md bg-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                      <div className="size-6 rounded-md bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
                         R
                       </div>
                       <span className="font-medium text-sm">RAG SaaS Widget</span>
                     </div>
-                    <Badge variant="outline" className="flex items-center gap-1 text-xs">
+                    <Badge
+                      variant="outline"
+                      className="flex items-center gap-1 text-xs bg-white/50 dark:bg-gray-800/50"
+                    >
                       <ExternalLink className="size-3" />
                       Embed
                     </Badge>
@@ -428,26 +527,26 @@ export default function LandingPage() {
                   <div className="p-4 flex flex-col gap-4">
                     <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto">
                       <div className="flex gap-3 items-start">
-                        <div className="size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                        <div className="size-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 shadow-sm">
                           <Bot className="size-4" />
                         </div>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 text-sm max-w-[80%]">
+                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg p-3 text-sm max-w-[80%] shadow-sm">
                           <p>Hello! I'm your document assistant. Ask me anything about your uploaded content.</p>
                         </div>
                       </div>
                       <div className="flex gap-3 items-start justify-end">
-                        <div className="bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 rounded-lg p-3 text-sm max-w-[80%]">
+                        <div className="bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 text-purple-800 dark:text-purple-300 rounded-lg p-3 text-sm max-w-[80%] shadow-sm">
                           <p>What's the main feature of your product?</p>
                         </div>
-                        <div className="size-8 rounded-full bg-purple-600 flex items-center justify-center text-white">
+                        <div className="size-8 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white shadow-sm">
                           <span className="text-xs font-medium">U</span>
                         </div>
                       </div>
                       <div className="flex gap-3 items-start">
-                        <div className="size-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                        <div className="size-8 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 shadow-sm">
                           <Bot className="size-4" />
                         </div>
-                        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-3 text-sm max-w-[80%]">
+                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg p-3 text-sm max-w-[80%] shadow-sm">
                           <p>
                             Based on your documents, our main feature is the ability to create AI chatbots trained on
                             your specific content. You can upload PDFs, TXTs, or Markdown files, and our system will
@@ -462,9 +561,9 @@ export default function LandingPage() {
                           <input
                             type="text"
                             placeholder="Ask a question..."
-                            className="w-full rounded-full border border-gray-200 dark:border-gray-700 py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-800"
+                            className="w-full rounded-full border border-gray-200/50 dark:border-gray-700/50 py-2 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-600/50 dark:bg-gray-800/50 backdrop-blur-sm"
                           />
-                          <button className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-purple-600 p-1.5 text-white">
+                          <button className="absolute right-1 top-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 p-1.5 text-white shadow-sm hover:shadow-md transition-shadow">
                             <ArrowRight className="size-3" />
                           </button>
                         </div>
@@ -474,7 +573,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Code snippet overlay */}
-                <div className="absolute -bottom-6 -right-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg border border-gray-200 dark:border-gray-800 p-4 w-[200px] transform rotate-6">
+                <div className="absolute -bottom-6 -right-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200/50 dark:border-gray-800/50 p-4 w-[200px] transform rotate-6">
                   <div className="text-xs font-mono text-gray-800 dark:text-gray-300 overflow-hidden">
                     <div className="text-purple-600 dark:text-purple-400">{"<script>"}</div>
                     <div>{"  window.ragWidget.init({"}</div>
@@ -485,21 +584,27 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                <div className="absolute -bottom-6 -right-6 -z-10 h-[300px] w-[300px] rounded-full bg-gradient-to-br from-purple-600/30 to-pink-600/30 blur-3xl opacity-70"></div>
-                <div className="absolute -top-6 -left-6 -z-10 h-[300px] w-[300px] rounded-full bg-gradient-to-br from-pink-600/30 to-purple-600/30 blur-3xl opacity-70"></div>
+                <GradientBlur className="-bottom-6 -right-6 -z-10 h-[300px] w-[300px]" color="purple" />
+                <GradientBlur className="-top-6 -left-6 -z-10 h-[300px] w-[300px]" color="blue" />
               </motion.div>
             </div>
           </div>
         </section>
 
         {/* Logos Section */}
-        <section className="w-full py-12 border-y bg-muted/30">
-          <div className="container px-4 md:px-6">
+        <section className="w-full py-12 border-y bg-gradient-to-r from-muted/30 via-muted/10 to-muted/30 relative">
+          <DotPattern className="opacity-50" />
+          <div className="container px-4 md:px-6 relative z-10">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <p className="text-sm font-medium text-muted-foreground">Trusted by innovative companies worldwide</p>
               <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12 lg:gap-16">
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <div key={i} className="group relative">
+                  <motion.div
+                    key={i}
+                    className="group relative"
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
                     <div className="absolute -inset-1 rounded-lg bg-gradient-to-r from-purple-600/20 to-pink-600/20 opacity-0 blur-lg transition-all duration-500 group-hover:opacity-100"></div>
                     <Image
                       src={`/placeholder.svg?height=60&width=120`}
@@ -508,7 +613,7 @@ export default function LandingPage() {
                       height={60}
                       className="h-8 w-auto opacity-70 grayscale transition-all group-hover:opacity-100 group-hover:grayscale-0 relative"
                     />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
@@ -516,15 +621,18 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section id="features" ref={featuresRef} className="w-full py-20 md:py-32">
-          <div className="container px-4 md:px-6">
+        <section id="features" ref={featuresRef} className="w-full py-20 md:py-32 relative">
+          <GridPattern className="opacity-30" />
+          <div className="container px-4 md:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={featuresInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Powerful RAG Capabilities</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Powerful RAG Capabilities
+              </h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 Our platform provides everything you need to create, deploy, and manage AI chatbots trained on your
                 documents.
@@ -538,29 +646,31 @@ export default function LandingPage() {
               className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
             >
               {features.map((feature, i) => (
-                <motion.div key={i} variants={item} className="group">
-                  <Card className="h-full overflow-hidden border-border/40 bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all hover:shadow-md hover:shadow-purple-500/5 hover:border-purple-500/10">
-                    <CardContent className="p-6 flex flex-col h-full">
-                      <div className="size-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-300 mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50">
-                        {feature.icon}
-                      </div>
-                      <h3 className="text-xl font-bold mb-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
-                        {feature.title}
-                      </h3>
-                      <p className="text-muted-foreground">{feature.description}</p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                <AnimatedCard key={i} delay={i * 0.1}>
+                  <CardContent className="p-6 flex flex-col h-full">
+                    <div className="size-12 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 flex items-center justify-center text-purple-600 dark:text-purple-300 mb-4 transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-purple-500/25">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl font-bold mb-2 group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                      {feature.title}
+                    </h3>
+                    <p className="text-muted-foreground">{feature.description}</p>
+                  </CardContent>
+                </AnimatedCard>
               ))}
             </motion.div>
           </div>
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="w-full py-20 md:py-32 bg-muted/30 relative overflow-hidden">
-          <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_40%,transparent_100%)]"></div>
+        <section
+          id="how-it-works"
+          className="w-full py-20 md:py-32 bg-gradient-to-br from-muted/30 via-background to-muted/30 relative overflow-hidden"
+        >
+          <GridPattern className="opacity-20" />
+          <FloatingElements />
 
-          <div className="container px-4 md:px-6 relative">
+          <div className="container px-4 md:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -568,14 +678,16 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-16"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Simple Process, Powerful Results</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Simple Process, Powerful Results
+              </h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 Get started in minutes and transform your documents into interactive AI chatbots.
               </p>
             </motion.div>
 
             <div className="grid md:grid-cols-4 gap-8 md:gap-12 relative">
-              <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-border to-transparent -translate-y-1/2 z-0"></div>
+              <AnimatedBeam className="hidden md:block top-1/2 left-0 right-0 -translate-y-1/2 z-0" />
 
               {howItWorks.map((step, i) => (
                 <motion.div
@@ -586,13 +698,13 @@ export default function LandingPage() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="relative z-10 flex flex-col items-center text-center space-y-4 group"
                 >
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-purple-400 text-white shadow-lg transition-transform duration-300 group-hover:scale-110">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-600 text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl group-hover:shadow-purple-500/25">
                     {step.icon}
                   </div>
-                  <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200 text-xs font-bold">
+                  <div className="absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full bg-gradient-to-br from-purple-200 to-pink-200 dark:from-purple-800 dark:to-pink-800 text-purple-800 dark:text-purple-200 text-xs font-bold shadow-sm">
                     {step.step}
                   </div>
-                  <h3 className="text-xl font-bold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                  <h3 className="text-xl font-bold group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                     {step.title}
                   </h3>
                   <p className="text-muted-foreground">{step.description}</p>
@@ -603,8 +715,9 @@ export default function LandingPage() {
         </section>
 
         {/* Testimonials Section */}
-        <section id="testimonials" className="w-full py-20 md:py-32 overflow-hidden">
-          <div className="container px-4 md:px-6">
+        <section id="testimonials" className="w-full py-20 md:py-32 overflow-hidden relative">
+          <DotPattern className="opacity-30" />
+          <div className="container px-4 md:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -612,7 +725,9 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">What Our Customers Say</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                What Our Customers Say
+              </h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 Don't just take our word for it. See how RAG SaaS is helping businesses improve their customer support
                 and knowledge management.
@@ -622,7 +737,7 @@ export default function LandingPage() {
             <div className="relative mt-16">
               <div className="absolute inset-0 bg-gradient-to-r from-background via-purple-100/20 to-background dark:from-background dark:via-purple-900/10 dark:to-background rounded-2xl"></div>
 
-              <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-background/80 backdrop-blur-sm">
+              <div className="relative overflow-hidden rounded-2xl border border-border/40 bg-background/80 backdrop-blur-sm shadow-2xl">
                 <div className="p-8 md:p-12">
                   {testimonials.map((testimonial, i) => (
                     <motion.div
@@ -638,9 +753,14 @@ export default function LandingPage() {
                       className="flex flex-col items-center"
                     >
                       <div className="mb-8 text-center">
+                        <div className="flex justify-center mb-4">
+                          {[...Array(testimonial.rating)].map((_, starIndex) => (
+                            <Star key={starIndex} className="size-5 fill-yellow-400 text-yellow-400" />
+                          ))}
+                        </div>
                         <p className="text-xl md:text-2xl italic mb-6 max-w-3xl mx-auto">"{testimonial.quote}"</p>
                         <div className="flex flex-col items-center">
-                          <div className="size-16 rounded-full overflow-hidden mb-3 border-2 border-purple-200 dark:border-purple-800">
+                          <div className="size-16 rounded-full overflow-hidden mb-3 border-2 border-purple-200 dark:border-purple-800 shadow-lg">
                             <Image
                               src={testimonial.avatar || "/placeholder.svg"}
                               alt={testimonial.author}
@@ -667,9 +787,9 @@ export default function LandingPage() {
                       <button
                         key={i}
                         onClick={() => setActiveTestimonial(i)}
-                        className={`size-2 rounded-full transition-colors ${
+                        className={`size-2 rounded-full transition-all ${
                           activeTestimonial === i
-                            ? "bg-purple-600"
+                            ? "bg-gradient-to-r from-purple-600 to-pink-600 scale-125"
                             : "bg-gray-300 dark:bg-gray-700 hover:bg-gray-400 dark:hover:bg-gray-600"
                         }`}
                         aria-label={`View testimonial ${i + 1}`}
@@ -683,8 +803,9 @@ export default function LandingPage() {
         </section>
 
         {/* Demo Section */}
-        <section className="w-full py-20 md:py-32 bg-muted/30">
-          <div className="container px-4 md:px-6">
+        <section className="w-full py-20 md:py-32 bg-gradient-to-br from-muted/30 via-background to-muted/30 relative">
+          <GridPattern className="opacity-20" />
+          <div className="container px-4 md:px-6 relative z-10">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -693,7 +814,9 @@ export default function LandingPage() {
                 transition={{ duration: 0.5 }}
                 className="flex flex-col"
               >
-                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">Embed Your Chatbot Anywhere</h2>
+                <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-6 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  Embed Your Chatbot Anywhere
+                </h2>
                 <p className="text-lg text-muted-foreground mb-6">
                   Our lightweight JavaScript widget makes it easy to add your document-trained chatbot to any website.
                   Just copy and paste a simple code snippet, and you're ready to go.
@@ -711,10 +834,10 @@ export default function LandingPage() {
                     </li>
                   ))}
                 </ul>
-                <Button className="w-fit rounded-full bg-purple-600 hover:bg-purple-700">
+                <ShimmerButton className="w-fit rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25">
                   View Documentation
                   <ExternalLink className="ml-2 size-4" />
-                </Button>
+                </ShimmerButton>
               </motion.div>
 
               <motion.div
@@ -724,14 +847,14 @@ export default function LandingPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="relative"
               >
-                <div className="bg-gray-50 dark:bg-gray-900 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 p-6">
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-xl overflow-hidden shadow-2xl border border-gray-200/50 dark:border-gray-800/50 p-6 backdrop-blur-sm">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="size-3 rounded-full bg-red-500"></div>
-                    <div className="size-3 rounded-full bg-yellow-500"></div>
-                    <div className="size-3 rounded-full bg-green-500"></div>
+                    <div className="size-3 rounded-full bg-red-500 shadow-sm"></div>
+                    <div className="size-3 rounded-full bg-yellow-500 shadow-sm"></div>
+                    <div className="size-3 rounded-full bg-green-500 shadow-sm"></div>
                     <div className="ml-2 text-sm text-gray-500 dark:text-gray-400">index.html</div>
                   </div>
-                  <div className="font-mono text-sm bg-white dark:bg-gray-800 rounded-lg p-4 overflow-x-auto">
+                  <div className="font-mono text-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-4 overflow-x-auto shadow-inner">
                     <pre className="text-gray-800 dark:text-gray-300">
                       <span className="text-purple-600 dark:text-purple-400">{"<head>"}</span>
                       {"\n  <!-- Other head elements -->\n"}
@@ -756,7 +879,7 @@ export default function LandingPage() {
                     </pre>
                   </div>
                 </div>
-                <div className="absolute -bottom-6 -right-6 -z-10 h-[200px] w-[200px] rounded-full bg-gradient-to-br from-purple-600/30 to-pink-600/30 blur-3xl opacity-70"></div>
+                <GradientBlur className="-bottom-6 -right-6 -z-10 h-[200px] w-[200px]" color="orange" />
               </motion.div>
             </div>
           </div>
@@ -764,9 +887,10 @@ export default function LandingPage() {
 
         {/* Pricing Section */}
         <section id="pricing" className="w-full py-20 md:py-32 relative overflow-hidden">
-          <div className="absolute inset-0 -z-10 h-full w-full bg-white dark:bg-black bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#1f1f1f_1px,transparent_1px),linear-gradient(to_bottom,#1f1f1f_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_50%,#000_40%,transparent_100%)]"></div>
+          <GridPattern className="opacity-20" />
+          <FloatingElements />
 
-          <div className="container px-4 md:px-6 relative">
+          <div className="container px-4 md:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -774,7 +898,9 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Simple, Transparent Pricing</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Simple, Transparent Pricing
+              </h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 Choose the plan that's right for your business. All plans include a 14-day free trial.
               </p>
@@ -783,7 +909,7 @@ export default function LandingPage() {
             <div className="mx-auto max-w-5xl">
               <Tabs defaultValue="monthly" className="w-full">
                 <div className="flex justify-center mb-8">
-                  <TabsList className="rounded-full p-1">
+                  <TabsList className="rounded-full p-1 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30">
                     <TabsTrigger value="monthly" className="rounded-full px-6">
                       Monthly
                     </TabsTrigger>
@@ -850,32 +976,29 @@ export default function LandingPage() {
                         cta: "Contact Sales",
                       },
                     ].map((plan, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: i * 0.1 }}
-                        className="group"
-                      >
-                        <Card
+                      <AnimatedCard key={i} delay={i * 0.1}>
+                        <div
                           className={`relative overflow-hidden h-full ${
-                            plan.popular ? "border-purple-600 shadow-lg" : "border-border/40 shadow-md"
+                            plan.popular
+                              ? "border-purple-600 shadow-lg shadow-purple-500/20"
+                              : "border-border/40 shadow-md"
                           } bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all duration-300 group-hover:shadow-xl ${
-                            plan.popular ? "group-hover:shadow-purple-500/10" : ""
+                            plan.popular ? "group-hover:shadow-purple-500/20" : ""
                           }`}
                         >
                           {plan.popular && (
-                            <div className="absolute top-0 right-0 bg-purple-600 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
+                            <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 text-xs font-medium rounded-bl-lg shadow-sm">
                               Most Popular
                             </div>
                           )}
                           <CardContent className="p-6 flex flex-col h-full">
-                            <h3 className="text-2xl font-bold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                            <h3 className="text-2xl font-bold group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                               {plan.name}
                             </h3>
                             <div className="flex items-baseline mt-4">
-                              <span className="text-4xl font-bold">{plan.price}</span>
+                              <span className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                {plan.price}
+                              </span>
                               {plan.price !== "Custom" && <span className="text-muted-foreground ml-1">/month</span>}
                             </div>
                             <p className="text-muted-foreground mt-2">{plan.description}</p>
@@ -887,18 +1010,20 @@ export default function LandingPage() {
                                 </li>
                               ))}
                             </ul>
-                            <Button
+                            <ShimmerButton
                               onClick={handleLogin}
                               className={`w-full mt-auto rounded-full ${
-                                plan.popular ? "bg-purple-600 hover:bg-purple-700" : "bg-muted hover:bg-muted/80"
+                                plan.popular
+                                  ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25"
+                                  : "bg-muted hover:bg-muted/80"
                               } transition-transform duration-300 group-hover:scale-105`}
                               variant={plan.popular ? "default" : "outline"}
                             >
                               {plan.cta}
-                            </Button>
+                            </ShimmerButton>
                           </CardContent>
-                        </Card>
-                      </motion.div>
+                        </div>
+                      </AnimatedCard>
                     ))}
                   </div>
                 </TabsContent>
@@ -960,32 +1085,29 @@ export default function LandingPage() {
                         cta: "Contact Sales",
                       },
                     ].map((plan, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: i * 0.1 }}
-                        className="group"
-                      >
-                        <Card
+                      <AnimatedCard key={i} delay={i * 0.1}>
+                        <div
                           className={`relative overflow-hidden h-full ${
-                            plan.popular ? "border-purple-600 shadow-lg" : "border-border/40 shadow-md"
+                            plan.popular
+                              ? "border-purple-600 shadow-lg shadow-purple-500/20"
+                              : "border-border/40 shadow-md"
                           } bg-gradient-to-b from-background to-muted/10 backdrop-blur transition-all duration-300 group-hover:shadow-xl ${
-                            plan.popular ? "group-hover:shadow-purple-500/10" : ""
+                            plan.popular ? "group-hover:shadow-purple-500/20" : ""
                           }`}
                         >
                           {plan.popular && (
-                            <div className="absolute top-0 right-0 bg-purple-600 text-white px-3 py-1 text-xs font-medium rounded-bl-lg">
+                            <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 text-xs font-medium rounded-bl-lg shadow-sm">
                               Most Popular
                             </div>
                           )}
                           <CardContent className="p-6 flex flex-col h-full">
-                            <h3 className="text-2xl font-bold group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors duration-300">
+                            <h3 className="text-2xl font-bold group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
                               {plan.name}
                             </h3>
                             <div className="flex items-baseline mt-4">
-                              <span className="text-4xl font-bold">{plan.price}</span>
+                              <span className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                                {plan.price}
+                              </span>
                               {plan.price !== "Custom" && plan.price !== "$0" && (
                                 <span className="text-muted-foreground ml-1">/month</span>
                               )}
@@ -999,18 +1121,20 @@ export default function LandingPage() {
                                 </li>
                               ))}
                             </ul>
-                            <Button
+                            <ShimmerButton
                               onClick={handleLogin}
                               className={`w-full mt-auto rounded-full ${
-                                plan.popular ? "bg-purple-600 hover:bg-purple-700" : "bg-muted hover:bg-muted/80"
+                                plan.popular
+                                  ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/25"
+                                  : "bg-muted hover:bg-muted/80"
                               } transition-transform duration-300 group-hover:scale-105`}
                               variant={plan.popular ? "default" : "outline"}
                             >
                               {plan.cta}
-                            </Button>
+                            </ShimmerButton>
                           </CardContent>
-                        </Card>
-                      </motion.div>
+                        </div>
+                      </AnimatedCard>
                     ))}
                   </div>
                 </TabsContent>
@@ -1020,8 +1144,12 @@ export default function LandingPage() {
         </section>
 
         {/* FAQ Section */}
-        <section id="faq" className="w-full py-20 md:py-32 bg-muted/30">
-          <div className="container px-4 md:px-6">
+        <section
+          id="faq"
+          className="w-full py-20 md:py-32 bg-gradient-to-br from-muted/30 via-background to-muted/30 relative"
+        >
+          <DotPattern className="opacity-30" />
+          <div className="container px-4 md:px-6 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1029,7 +1157,9 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Frequently Asked Questions</h2>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                Frequently Asked Questions
+              </h2>
               <p className="max-w-[800px] text-muted-foreground md:text-lg">
                 Find answers to common questions about RAG SaaS and how it can help your business.
               </p>
@@ -1045,11 +1175,11 @@ export default function LandingPage() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.3, delay: i * 0.1 }}
                   >
-                    <AccordionItem value={`faq-${i}`}>
-                      <AccordionTrigger className="data-[state=open]:text-purple-600 dark:data-[state=open]:text-purple-400">
+                    <AccordionItem value={`faq-${i}`} className="border-border/40">
+                      <AccordionTrigger className="data-[state=open]:bg-gradient-to-r data-[state=open]:from-purple-600 data-[state=open]:to-pink-600 data-[state=open]:bg-clip-text data-[state=open]:text-transparent hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:bg-clip-text hover:text-transparent transition-all">
                         {faq.question}
                       </AccordionTrigger>
-                      <AccordionContent>{faq.answer}</AccordionContent>
+                      <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
                     </AccordionItem>
                   </motion.div>
                 ))}
@@ -1059,25 +1189,28 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="w-full py-12 border-t">
-        <div className="container px-4 md:px-6">
+      <footer className="w-full py-12 border-t border-border/40 bg-gradient-to-r from-muted/20 to-muted/10 relative">
+        <DotPattern className="opacity-20" />
+        <div className="container px-4 md:px-6 relative z-10">
           <div className="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
             <div className="flex items-center gap-2 font-bold">
-              <div className="size-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white">
+              <div className="size-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white shadow-lg">
                 R
               </div>
-              <span>RAG SaaS</span>
+              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                RAG SaaS
+              </span>
             </div>
             <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
               <Link
                 href="/terms"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:bg-clip-text hover:text-transparent"
               >
                 Terms
               </Link>
               <Link
                 href="/privacy"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:bg-clip-text hover:text-transparent"
               >
                 Privacy
               </Link>
@@ -1085,7 +1218,7 @@ export default function LandingPage() {
                 href="https://github.com/AntonioErdeljac/next13-ai-saas-starter"
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600 hover:bg-clip-text hover:text-transparent"
               >
                 <Github className="mr-2 size-4 inline-block" />
                 Github
