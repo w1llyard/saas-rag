@@ -1,10 +1,21 @@
-import { createBrowserClient } from '@supabase/ssr'
+import { createBrowserClient } from "@supabase/ssr"
 
-const client = createBrowserClient(
+let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null
+
+export function createClient() {
+  // Return existing instance if it exists (singleton pattern)
+  if (supabaseInstance) {
+    return supabaseInstance
+  }
+
+  // Create new instance
+  supabaseInstance = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  )
 
-const createClient = () => client;
+  return supabaseInstance
+}
 
-export default createClient;
+// Default export for backward compatibility
+export default createClient

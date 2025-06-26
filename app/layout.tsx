@@ -10,6 +10,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "RAG SaaS - Turn Your Documents into Smart AI Chatbots",
   description: "Upload PDFs, TXTs, or Markdown, then ask questions and get context-aware answers powered by Gemini AI.",
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({
