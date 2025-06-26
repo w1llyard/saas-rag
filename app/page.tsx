@@ -19,6 +19,7 @@ import {
   Bot,
   ExternalLink,
   ArrowRight,
+  Github,
   Zap,
   Shield,
   LogIn,
@@ -29,6 +30,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useTheme } from "next-themes"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { useUserStore } from "@/store/user-store"
 import { useRouter } from "next/navigation"
 
@@ -81,7 +83,7 @@ export default function LandingPage() {
   }
 
   const handleLogin = () => {
-    router.push('/auth')
+    router.push("/auth")
   }
 
   const container = {
@@ -370,8 +372,8 @@ export default function LandingPage() {
                       </Button>
                     </Link>
                   ) : (
-                    <Button 
-                      size="lg" 
+                    <Button
+                      size="lg"
                       onClick={handleLogin}
                       className="rounded-full h-12 px-8 text-base bg-purple-600 hover:bg-purple-700"
                     >
@@ -1027,4 +1029,71 @@ export default function LandingPage() {
               transition={{ duration: 0.5 }}
               className="flex flex-col items-center justify-center space-y-4 text-center mb-12"
             >
-              <h2 className="text-\
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Frequently Asked Questions</h2>
+              <p className="max-w-[800px] text-muted-foreground md:text-lg">
+                Find answers to common questions about RAG SaaS and how it can help your business.
+              </p>
+            </motion.div>
+
+            <div className="max-w-3xl mx-auto">
+              <Accordion type="single" collapsible className="w-full">
+                {faqs.map((faq, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.1 }}
+                  >
+                    <AccordionItem value={`faq-${i}`}>
+                      <AccordionTrigger className="data-[state=open]:text-purple-600 dark:data-[state=open]:text-purple-400">
+                        {faq.question}
+                      </AccordionTrigger>
+                      <AccordionContent>{faq.answer}</AccordionContent>
+                    </AccordionItem>
+                  </motion.div>
+                ))}
+              </Accordion>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="w-full py-12 border-t">
+        <div className="container px-4 md:px-6">
+          <div className="flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
+            <div className="flex items-center gap-2 font-bold">
+              <div className="size-8 rounded-lg bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white">
+                R
+              </div>
+              <span>RAG SaaS</span>
+            </div>
+            <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
+              <Link
+                href="/terms"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Terms
+              </Link>
+              <Link
+                href="/privacy"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Privacy
+              </Link>
+              <Link
+                href="https://github.com/AntonioErdeljac/next13-ai-saas-starter"
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Github className="mr-2 size-4 inline-block" />
+                Github
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  )
+}
