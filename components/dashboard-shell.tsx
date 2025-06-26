@@ -29,7 +29,7 @@ import { MobileNavBar } from "@/components/mobile-nav-bar";
 import { useUserStore } from "@/store/user-store";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import createClient from "@/lib/supabase/client";
 
 interface DashboardShellProps {
   children: React.ReactNode;
