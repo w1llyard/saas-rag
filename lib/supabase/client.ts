@@ -1,6 +1,7 @@
 import { createBrowserClient } from "@supabase/ssr"
+import { SupabaseClient } from "@supabase/supabase-js"
 
-let supabaseInstance: ReturnType<typeof createBrowserClient> | null = null
+let supabaseInstance: SupabaseClient | null = null
 
 export function createClient() {
   // Return existing instance if it exists (singleton pattern)

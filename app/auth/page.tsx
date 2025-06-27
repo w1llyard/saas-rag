@@ -196,21 +196,25 @@ export default function AuthPage() {
       <div className="absolute bottom-20 right-20 w-96 h-96 bg-pink-300/20 rounded-full blur-3xl animate-pulse delay-1000" />
 
       <div className="relative z-10 w-full max-w-md">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           {/* Header */}
           <div className="text-center mb-8">
-            <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
-              <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" />
-              <span className="text-sm text-muted-foreground">Back to home</span>
-            </Link>
-
             <div className="flex items-center justify-center gap-3 mb-6">
-              <div className="size-12 rounded-xl bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white shadow-lg">
-                <span className="text-xl font-bold">R</span>
-              </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                RAG SaaS
-              </h1>
+              <Link
+                href="/"
+                className="inline-flex items-center gap-2 mb-6 group"
+              >
+                <div className="size-12 rounded-xl bg-gradient-to-br from-purple-600 to-purple-400 flex items-center justify-center text-white shadow-lg">
+                  <span className="text-xl font-bold">R</span>
+                </div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                  RAG SaaS
+                </h1>
+              </Link>
             </div>
           </div>
 
@@ -218,7 +222,9 @@ export default function AuthPage() {
           <Card className="backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-white/20 shadow-2xl">
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl font-bold">{getTitle()}</CardTitle>
-              <CardDescription className="text-base">{getDescription()}</CardDescription>
+              <CardDescription className="text-base">
+                {getDescription()}
+              </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6">
@@ -232,7 +238,9 @@ export default function AuthPage() {
                   >
                     <Alert className="border-green-200 bg-green-50 dark:bg-green-900/20">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <AlertDescription className="text-green-800 dark:text-green-200">{success}</AlertDescription>
+                      <AlertDescription className="text-green-800 dark:text-green-200">
+                        {success}
+                      </AlertDescription>
                     </Alert>
                   </motion.div>
                 )}
@@ -299,7 +307,9 @@ export default function AuthPage() {
                       <Separator className="w-full" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                      <span className="bg-background px-2 text-muted-foreground">
+                        Or continue with
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -318,7 +328,9 @@ export default function AuthPage() {
                         placeholder="Enter your full name"
                         className="pl-10 h-11"
                         value={formData.fullName}
-                        onChange={(e) => handleInputChange("fullName", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("fullName", e.target.value)
+                        }
                         disabled={loading}
                       />
                     </div>
@@ -335,7 +347,9 @@ export default function AuthPage() {
                       placeholder="Enter your email"
                       className="pl-10 h-11"
                       value={formData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       disabled={loading}
                     />
                   </div>
@@ -352,7 +366,9 @@ export default function AuthPage() {
                         placeholder="Enter your password"
                         className="pl-10 pr-10 h-11"
                         value={formData.password}
-                        onChange={(e) => handleInputChange("password", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("password", e.target.value)
+                        }
                         disabled={loading}
                       />
                       <button
@@ -360,7 +376,11 @@ export default function AuthPage() {
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -377,15 +397,23 @@ export default function AuthPage() {
                         placeholder="Confirm your password"
                         className="pl-10 pr-10 h-11"
                         value={formData.confirmPassword}
-                        onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("confirmPassword", e.target.value)
+                        }
                         disabled={loading}
                       />
                       <button
                         type="button"
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                       >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -431,11 +459,17 @@ export default function AuthPage() {
                   <>
                     <p className="text-xs text-muted-foreground">
                       By creating an account, you agree to our{" "}
-                      <Link href="/terms" className="text-purple-600 hover:underline">
+                      <Link
+                        href="/terms"
+                        className="text-purple-600 hover:underline"
+                      >
                         Terms of Service
                       </Link>{" "}
                       and{" "}
-                      <Link href="/privacy" className="text-purple-600 hover:underline">
+                      <Link
+                        href="/privacy"
+                        className="text-purple-600 hover:underline"
+                      >
                         Privacy Policy
                       </Link>
                     </p>
@@ -470,5 +504,5 @@ export default function AuthPage() {
         </motion.div>
       </div>
     </div>
-  )
+  );
 }

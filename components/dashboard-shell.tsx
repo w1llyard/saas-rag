@@ -83,8 +83,8 @@ export function DashboardShell({ children }: DashboardShellProps) {
     if (error) {
       console.error('Logout error:', error.message)
     } else {
-      clearUser()
       router.push('/')
+      clearUser()
     }
   }
 

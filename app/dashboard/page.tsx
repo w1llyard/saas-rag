@@ -33,6 +33,7 @@ import { DashboardShell } from "@/components/dashboard-shell";
 import { CreateChatbotForm } from "@/components/create-chatbot-form";
 import { ChatbotCard } from "@/components/chatbot-card";
 import { useUserStore } from "@/store/user-store";
+import Loading from "@/components/loading";
 
 // Mock data for the dashboard
 const mockChatbots = [
@@ -109,7 +110,7 @@ export default function DashboardPage() {
   };
 
   if (isLoading) {
-    return <p>Loading user information...</p>;
+    return <Loading/>;
   }
 
   return (
