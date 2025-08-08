@@ -237,7 +237,7 @@ export default function DashboardPage() {
         </DropdownMenu>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
         {filteredChatbots.map((chatbot) => (
           <ChatbotCard
             key={chatbot.id}

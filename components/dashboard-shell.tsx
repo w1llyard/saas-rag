@@ -25,7 +25,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "next-themes";
-import { MobileNavBar } from "@/components/mobile-nav-bar";
 import { useUserStore } from "@/store/user-store";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { useRouter } from "next/navigation";
@@ -278,14 +277,13 @@ export function DashboardShell({ children }: DashboardShellProps) {
         </div>
 
         <main className="flex-1 pb-16 md:pb-0">
-          <div className="py-6">
+          <div className="py-6 px-6">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
               {children}
             </div>
           </div>
         </main>
       </div>
-      <MobileNavBar />
     </div>
   );
 }
