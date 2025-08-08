@@ -18,4 +18,3 @@ export interface AppUser {
     created_at: string
     updated_at: string
   }
-  
